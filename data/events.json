@@ -1,0 +1,4 @@
+{
+  "_comment": "Tu calendario de promos. Solo fechas que TU sepas: aqui no hay nada inventado. La app avisa cuando un evento esta a 7 dias o menos y lo mete en el texto del alerta. Formato: {\"date\": \"2026-09-25\", \"name\": \"TOTW\", \"note\": \"opcional\"}",
+  "events": []
+}
