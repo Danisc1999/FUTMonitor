@@ -45,6 +45,12 @@
       "name": "Mini Release",
       "color": "oklch(0.68 0.16 310)",
       "icon": "assets/icon-minirelease.png"
+    },
+    {
+      "date": "2026-09-16",
+      "name": "Mini Release",
+      "color": "oklch(0.68 0.16 310)",
+      "icon": "assets/icon-minirelease.png"
     }
   ]
 }
