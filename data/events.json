@@ -20,7 +20,8 @@
       "icon": "assets/icon-rivals.png",
       "editable": false,
       "skippedDates": [
-        "2026-09-10"
+        "2026-09-10",
+        "2026-09-03"
       ]
     },
     {
