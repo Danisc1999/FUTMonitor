@@ -12,6 +12,16 @@
       "targetPrice": null,
       "buyPrice": null,
       "qty": 0
+    },
+    {
+      "url": "https://www.fut.gg/players/266039-pubill/27-266039/",
+      "eaId": 266039,
+      "cardId": 266039,
+      "tag": "squad",
+      "alertMode": "off",
+      "targetPrice": null,
+      "buyPrice": null,
+      "qty": 0
     }
   ]
 }
