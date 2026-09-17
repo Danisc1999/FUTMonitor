@@ -1,10 +1,50 @@
 {
-  "_comment": "Tu calendario. Los 5 eventos de abajo son fijos (no editables desde la app, solo puedes marcar 'hoy no' si algun dia no se cumplen). Para una campana real con nombre y fechas, usa 'Anadir campana con rango de fechas' en la app - esa si la nombras y le pones duracion tu.",
   "events": [
-    { "weekday": "miercoles", "name": "Sale el TOTW", "note": "", "color": "oklch(0.80 0.14 75)", "icon": "assets/icon-totw.png", "editable": false },
-    { "weekday": "jueves", "name": "Recompensas de Rivals", "note": "posible pico por inicio de FUT Champions", "color": "oklch(0.72 0.15 145)", "icon": "assets/icon-rivals.png", "editable": false },
-    { "weekday": "viernes", "name": "Inicio FUT Champions", "note": "picos de compra y venta jueves-domingo", "color": "oklch(0.65 0.19 25)", "icon": "assets/icon-futchampions.png", "editable": false },
-    { "weekday": "viernes", "name": "Posible nueva campaña", "note": "si sabes el nombre, añádela abajo como campaña con rango de fechas", "color": "oklch(0.74 0.14 330)", "icon": "assets/icon-friday.png", "editable": false },
-    { "weekday": "domingo", "name": "Recompensas de Squad Battles", "note": "", "color": "oklch(0.68 0.15 250)", "icon": "assets/icon-squadbattles.png", "editable": false }
+    {
+      "weekday": "miercoles",
+      "name": "Sale el TOTW",
+      "note": "",
+      "color": "oklch(0.80 0.14 75)",
+      "icon": "assets/icon-totw.png",
+      "editable": false
+    },
+    {
+      "weekday": "jueves",
+      "name": "Recompensas de Rivals",
+      "note": "posible pico por inicio de FUT Champions",
+      "color": "oklch(0.72 0.15 145)",
+      "icon": "assets/icon-rivals.png",
+      "editable": false
+    },
+    {
+      "weekday": "viernes",
+      "name": "Inicio FUT Champions",
+      "note": "picos de compra y venta jueves-domingo",
+      "color": "oklch(0.65 0.19 25)",
+      "icon": "assets/icon-futchampions.png",
+      "editable": false
+    },
+    {
+      "weekday": "viernes",
+      "name": "Posible nueva campaña",
+      "note": "si sabes el nombre, añádela abajo como campaña con rango de fechas",
+      "color": "oklch(0.74 0.14 330)",
+      "icon": "assets/icon-friday.png",
+      "editable": false
+    },
+    {
+      "weekday": "domingo",
+      "name": "Recompensas de Squad Battles",
+      "note": "",
+      "color": "oklch(0.68 0.15 250)",
+      "icon": "assets/icon-squadbattles.png",
+      "editable": false
+    },
+    {
+      "date": "2026-09-21",
+      "name": "Mini Release",
+      "color": "oklch(0.68 0.16 310)",
+      "icon": "assets/icon-minirelease.png"
+    }
   ]
 }
