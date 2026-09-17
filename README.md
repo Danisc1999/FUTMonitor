@@ -37,10 +37,9 @@ abajo, por chat, nunca como archivo). Sin instalar nada: *Add file → Upload
 files* y arrastra: `index.html`, `sw.js`, `icon-180.png`, `icon-192.png`,
 `icon-512.png`, `manifest.webmanifest`, `collector/`, `data/`.
 
-**Importante:** el planificador está aquí como `workflow-monitor.yml` en la raíz.
-En GitHub tiene que vivir en `.github/workflows/monitor.yml`. Desde la web:
-*Add file → Create new file*, escribe la ruta `.github/workflows/monitor.yml`
-y pega el contenido.
+El planificador ya está en su sitio correcto: `.github/workflows/monitor.yml`.
+No hay que moverlo ni renombrarlo, solo subirlo tal cual (arrastra la carpeta
+`.github` entera junto con el resto).
 
 ### 2. Crea el bot de Telegram
 
