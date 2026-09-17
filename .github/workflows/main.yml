@@ -1,0 +1,56 @@
+# FUT Monitor ES - recogida de precios programada
+#
+# Intervalo: ajusta el cron de abajo (por defecto cada 30 minutos).
+#   "*/30 * * * *" = 30 min | "0 * * * *" = 1 h | "*/15 * * * *" = 15 min
+# GitHub puede retrasarse unos minutos en horas punta. Es normal.
+
+name: FUT Monitor
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fut-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias del push
+        run: pip install --quiet pywebpush
+
+      - name: Recoger precios
+        env:
+          PLATFORM: ps5            # ps5 = consola (PS5/Xbox) | pc
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          WHATSAPP_PHONE: ${{ secrets.WHATSAPP_PHONE }}
+          CALLMEBOT_APIKEY: ${{ secrets.CALLMEBOT_APIKEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          VAPID_SUBJECT: ${{ secrets.VAPID_SUBJECT }}
+          PUSH_SUBSCRIPTION: ${{ secrets.PUSH_SUBSCRIPTION }}
+        run: python collector/collector.py
+
+      - name: Guardar datos
+        run: |
+          git config user.name "fut-monitor-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/
+          if git diff --cached --quiet; then
+            echo "Nada que commitear"
+          else
+            git commit -m "datos: actualizacion automatica de precios"
+            git pull --rebase origin ${GITHUB_REF_NAME} || true
+            git push
