@@ -42,6 +42,16 @@
       "targetPrice": null,
       "buyPrice": null,
       "qty": 0
+    },
+    {
+      "url": "https://www.fut.gg/players/275468-andres-garcia-robledo-andres-garcia/27-275468/",
+      "eaId": 275468,
+      "cardId": 275468,
+      "tag": "squad",
+      "alertMode": "off",
+      "targetPrice": null,
+      "buyPrice": null,
+      "qty": 0
     }
   ]
 }
