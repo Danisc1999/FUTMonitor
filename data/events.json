@@ -6,7 +6,10 @@
       "note": "",
       "color": "oklch(0.80 0.14 75)",
       "icon": "assets/icon-totw.png",
-      "editable": false
+      "editable": false,
+      "skippedDates": [
+        "2026-09-09"
+      ]
     },
     {
       "weekday": "jueves",
