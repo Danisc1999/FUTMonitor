@@ -112,6 +112,16 @@
       "targetPrice": null,
       "buyPrice": null,
       "qty": 0
+    },
+    {
+      "url": "https://www.fut.gg/players/230666-gabriel-jesus/27-50562314/",
+      "eaId": 230666,
+      "cardId": 50562314,
+      "tag": "squad",
+      "alertMode": "off",
+      "targetPrice": null,
+      "buyPrice": null,
+      "qty": 0
     }
   ]
 }
