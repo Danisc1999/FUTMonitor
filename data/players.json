@@ -62,6 +62,16 @@
       "targetPrice": null,
       "buyPrice": null,
       "qty": 0
+    },
+    {
+      "url": "https://www.fut.gg/players/279604-mikel-jauregizar-alboniga-jauregizar/27-279604/",
+      "eaId": 279604,
+      "cardId": 279604,
+      "tag": "squad",
+      "alertMode": "off",
+      "targetPrice": null,
+      "buyPrice": null,
+      "qty": 0
     }
   ]
 }
