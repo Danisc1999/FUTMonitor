@@ -41,7 +41,10 @@
       "note": "si sabes el nombre, añádela abajo como campaña con rango de fechas",
       "color": "oklch(0.74 0.14 330)",
       "icon": "assets/icon-friday.png",
-      "editable": false
+      "editable": false,
+      "skippedDates": [
+        "2026-09-04"
+      ]
     },
     {
       "weekday": "domingo",
