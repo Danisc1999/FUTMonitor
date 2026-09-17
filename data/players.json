@@ -2,5 +2,16 @@
   "settings": {
     "platform": "ps5"
   },
-  "players": []
+  "players": [
+    {
+      "url": "https://www.fut.gg/players/234102-ionut-andrei-radu/27-234102/",
+      "eaId": 234102,
+      "cardId": 234102,
+      "tag": "squad",
+      "alertMode": "off",
+      "targetPrice": null,
+      "buyPrice": null,
+      "qty": 0
+    }
+  ]
 }
