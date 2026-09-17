@@ -15,7 +15,9 @@
       "color": "oklch(0.72 0.15 145)",
       "icon": "assets/icon-rivals.png",
       "editable": false,
-      "skippedDates": []
+      "skippedDates": [
+        "2026-09-17"
+      ]
     },
     {
       "weekday": "viernes",
