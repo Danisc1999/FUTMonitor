@@ -32,6 +32,16 @@
       "targetPrice": null,
       "buyPrice": null,
       "qty": 0
+    },
+    {
+      "url": "https://www.fut.gg/players/267860-valentin-gomez/27-267860/",
+      "eaId": 267860,
+      "cardId": 267860,
+      "tag": "squad",
+      "alertMode": "off",
+      "targetPrice": null,
+      "buyPrice": null,
+      "qty": 0
     }
   ]
 }
