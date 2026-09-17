@@ -122,6 +122,16 @@
       "targetPrice": null,
       "buyPrice": null,
       "qty": 0
+    },
+    {
+      "url": "https://www.fut.gg/players/259307-malo-gusto/27-259307/",
+      "eaId": 259307,
+      "cardId": 259307,
+      "tag": "invest",
+      "alertMode": "off",
+      "targetPrice": null,
+      "buyPrice": null,
+      "qty": 0
     }
   ]
 }
