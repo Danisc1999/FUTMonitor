@@ -82,6 +82,16 @@
       "targetPrice": null,
       "buyPrice": null,
       "qty": 0
+    },
+    {
+      "url": "https://www.fut.gg/players/272505-endrick-felipe-moreira-de-sousa-endrick/27-272505/",
+      "eaId": 272505,
+      "cardId": 272505,
+      "tag": "squad",
+      "alertMode": "off",
+      "targetPrice": null,
+      "buyPrice": null,
+      "qty": 0
     }
   ]
 }
