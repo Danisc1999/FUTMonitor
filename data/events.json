@@ -56,7 +56,8 @@
       "icon": "assets/icon-squadbattles.png",
       "editable": false,
       "skippedDates": [
-        "2026-09-13"
+        "2026-09-13",
+        "2026-09-06"
       ]
     }
   ]
