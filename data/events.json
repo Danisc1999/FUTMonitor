@@ -8,7 +8,8 @@
       "icon": "assets/icon-totw.png",
       "editable": false,
       "skippedDates": [
-        "2026-09-09"
+        "2026-09-09",
+        "2026-09-02"
       ]
     },
     {
