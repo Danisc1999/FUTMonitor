@@ -1,9 +1,3 @@
 {
-  "events": [
-    {
-      "weekday": "miercoles",
-      "name": "Equipo TOTW",
-      "note": ""
-    }
-  ]
+  "events": []
 }
