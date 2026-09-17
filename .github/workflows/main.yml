@@ -54,3 +54,4 @@ jobs:
             git commit -m "datos: actualizacion automatica de precios"
             git pull --rebase origin ${GITHUB_REF_NAME} || true
             git push
+          fi
