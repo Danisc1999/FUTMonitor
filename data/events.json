@@ -54,7 +54,10 @@
       "note": "",
       "color": "oklch(0.68 0.15 250)",
       "icon": "assets/icon-squadbattles.png",
-      "editable": false
+      "editable": false,
+      "skippedDates": [
+        "2026-09-13"
+      ]
     }
   ]
 }
