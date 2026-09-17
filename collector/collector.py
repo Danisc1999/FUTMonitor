@@ -109,18 +109,14 @@ def net_after_tax(price):
     return None if not price else round(price * (1 - EA_TAX))
 
 
-def next_event(events, today=None):
-    """Proximo evento: {name, date, daysAway, note} o None.
-
-    Admite tres formas en cada entrada de data/events.json:
-      {"date": "2026-09-25", "name": ..., "note": ...}      - fecha suelta
-      {"weekday": "jueves", "name": ..., "note": ...}       - se repite cada semana
-      "skippedDates": ["2026-09-25", ...]                    - excepciones ("hoy no")
-    weekday en espanol: lunes..domingo.
+def next_events(events, today=None):
+    """Todos los eventos que caen en el dia mas proximo (pueden ser varios a la
+    vez). Cada uno: {name, date, daysAway, note, color, icon}. Lista vacia si
+    no hay eventos configurados.
     """
     today = today or date.today()
     WEEKDAYS = ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo"]
-    best = None
+    resolved = []
     for ev in events or []:
         skipped = set(ev.get("skippedDates") or [])
         days = None
@@ -140,7 +136,7 @@ def next_event(events, today=None):
             wd = str(ev["weekday"]).strip().lower()
             if wd not in WEEKDAYS:
                 continue
-            for attempt in range(6):  # hasta 6 semanas buscando una fecha no saltada
+            for attempt in range(6):
                 cand_days = (WEEKDAYS.index(wd) - today.weekday()) % 7 + attempt * 7
                 cand_date = (today + timedelta(days=cand_days)).isoformat()
                 if cand_date not in skipped:
@@ -150,11 +146,18 @@ def next_event(events, today=None):
                 continue
         else:
             continue
-        if best is None or days < best["daysAway"]:
-            best = {"name": ev.get("name", "Evento"), "date": d_str,
-                    "daysAway": days, "note": ev.get("note"),
-                    "color": ev.get("color"), "icon": ev.get("icon")}
-    return best
+        resolved.append({"name": ev.get("name", "Evento"), "date": d_str, "daysAway": days,
+                          "note": ev.get("note"), "color": ev.get("color"), "icon": ev.get("icon")})
+    if not resolved:
+        return []
+    min_days = min(r["daysAway"] for r in resolved)
+    return [r for r in resolved if r["daysAway"] == min_days]
+
+
+def next_event(events, today=None):
+    """Compatibilidad: solo el primero de next_events()."""
+    evs = next_events(events, today)
+    return evs[0] if evs else None
 
 
 def build_verdict(row, ev):
@@ -275,6 +278,7 @@ def main():
     players = cfg.get("players", [])
     events = load_json(os.path.join(DATA, "events.json"), {"events": []}).get("events", [])
     ev = next_event(events)
+    evs = next_events(events)
 
     changed_cfg = False
     for p in players:
@@ -289,7 +293,7 @@ def main():
         print("Watchlist vacia. Anade jugadores desde la app o en data/players.json")
         save_json(os.path.join(DATA, "summary.json"), {
             "generatedAt": now, "platform": platform, "players": [],
-            "nextEvent": ev, "portfolio": None, "eaTax": EA_TAX,
+            "nextEvent": ev, "nextEvents": evs, "portfolio": None, "eaTax": EA_TAX,
         })
         return
 
@@ -394,6 +398,7 @@ def main():
         "platform": platform,
         "eaTax": EA_TAX,
         "nextEvent": ev,
+        "nextEvents": evs,
         "portfolio": portfolio,
         "players": rows,
     })
