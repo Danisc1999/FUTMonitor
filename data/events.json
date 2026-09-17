@@ -30,7 +30,10 @@
       "note": "picos de compra y venta jueves-domingo",
       "color": "oklch(0.65 0.19 25)",
       "icon": "assets/icon-futchampions.png",
-      "editable": false
+      "editable": false,
+      "skippedDates": [
+        "2026-09-04"
+      ]
     },
     {
       "weekday": "viernes",
