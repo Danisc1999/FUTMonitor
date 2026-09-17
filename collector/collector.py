@@ -152,7 +152,8 @@ def next_event(events, today=None):
             continue
         if best is None or days < best["daysAway"]:
             best = {"name": ev.get("name", "Evento"), "date": d_str,
-                    "daysAway": days, "note": ev.get("note")}
+                    "daysAway": days, "note": ev.get("note"),
+                    "color": ev.get("color"), "icon": ev.get("icon")}
     return best
 
 
@@ -362,6 +363,9 @@ def main():
             "alerts": player_alerts(p),
             "tag": p.get("tag", "watch"),   # squad | watch | invest
             "dynamic": bool(p.get("dynamic")),
+            "evo": p.get("evo"),
+            "firstOwner": bool(p.get("firstOwner")),
+            "transferable": p.get("transferable") is not False,
             "note": p.get("note"),
             "extinct": price is None,
         }
