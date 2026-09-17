@@ -21,7 +21,7 @@ import json
 import os
 import sys
 import time
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import futgg  # noqa: E402
@@ -110,19 +110,48 @@ def net_after_tax(price):
 
 
 def next_event(events, today=None):
-    """Proximo evento del calendario: {name, date, daysAway} o None."""
+    """Proximo evento: {name, date, daysAway, note} o None.
+
+    Admite tres formas en cada entrada de data/events.json:
+      {"date": "2026-09-25", "name": ..., "note": ...}      - fecha suelta
+      {"weekday": "jueves", "name": ..., "note": ...}       - se repite cada semana
+      "skippedDates": ["2026-09-25", ...]                    - excepciones ("hoy no")
+    weekday en espanol: lunes..domingo.
+    """
     today = today or date.today()
+    WEEKDAYS = ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo"]
     best = None
     for ev in events or []:
-        try:
-            d = datetime.strptime(ev["date"], "%Y-%m-%d").date()
-        except Exception:  # noqa: BLE001
-            continue
-        days = (d - today).days
-        if days < 0:
+        skipped = set(ev.get("skippedDates") or [])
+        days = None
+        d_str = None
+        if ev.get("date"):
+            try:
+                d = datetime.strptime(ev["date"], "%Y-%m-%d").date()
+            except Exception:  # noqa: BLE001
+                continue
+            if ev["date"] in skipped:
+                continue
+            days = (d - today).days
+            if days < 0:
+                continue
+            d_str = ev["date"]
+        elif ev.get("weekday"):
+            wd = str(ev["weekday"]).strip().lower()
+            if wd not in WEEKDAYS:
+                continue
+            for attempt in range(6):  # hasta 6 semanas buscando una fecha no saltada
+                cand_days = (WEEKDAYS.index(wd) - today.weekday()) % 7 + attempt * 7
+                cand_date = (today + timedelta(days=cand_days)).isoformat()
+                if cand_date not in skipped:
+                    days, d_str = cand_days, cand_date
+                    break
+            if days is None:
+                continue
+        else:
             continue
         if best is None or days < best["daysAway"]:
-            best = {"name": ev.get("name", "Evento"), "date": ev["date"],
+            best = {"name": ev.get("name", "Evento"), "date": d_str,
                     "daysAway": days, "note": ev.get("note")}
     return best
 
@@ -159,14 +188,48 @@ def build_verdict(row, ev):
     return " - ".join(bits) if bits else None
 
 
-def check_alert(player, row, ev):
-    """Texto del alerta o None. Modos: every | below | above | off.
+def player_alerts(player):
+    """Lista de reglas [{mode, target}] de un jugador, ya resueltas a un precio.
+
+    Formato nuevo: player['alerts'] = [{"mode": "below", "target": 300000}, ...]
+    mode puede ser below | above | every | margin. "margin" no lleva precio fijo:
+    lleva {"percent": 15} y se resuelve aqui contra el buyPrice ACTUAL del jugador,
+    para que si cambias el precio de compra la alerta se recalcule sola.
+    Sigue leyendo el formato viejo (alertMode/targetPrice sueltos) por compatibilidad.
+    """
+    alerts = player.get("alerts")
+    resolved = []
+    if alerts:
+        for a in alerts:
+            mode = a.get("mode")
+            if mode == "margin":
+                buy = player.get("buyPrice")
+                pct = a.get("percent")
+                if buy and pct:
+                    # precio bruto de venta necesario para sacar `pct`% neto sobre lo que pagaste
+                    needed = round(buy * (1 + pct / 100) / (1 - EA_TAX))
+                    resolved.append({"mode": "above", "target": needed, "isMargin": True, "percent": pct})
+                continue
+            if mode in ("below", "above", "every"):
+                resolved.append(a)
+        return resolved
+    legacy_mode = player.get("alertMode", "off")
+    legacy_target = player.get("targetPrice")
+    if legacy_mode == "every":
+        return [{"mode": "every", "target": None}]
+    if legacy_mode in ("below", "above") and legacy_target:
+        return [{"mode": legacy_mode, "target": legacy_target}]
+    return []
+
+
+def check_alerts(player, row, ev):
+    """Lista de textos de alerta disparados esta ronda (puede haber varios).
 
     Los alertas de objetivo solo saltan cuando el precio CRUZA el valor,
-    no cada 30 min mientras siga al otro lado.
+    no cada 30 min mientras siga al otro lado. Cada regla se evalua por
+    separado, asi que "avisa si baja de X" y "avisa si sube de Y" pueden
+    estar activas para el mismo jugador a la vez.
     """
-    mode = player.get("alertMode", "off")
-    target = player.get("targetPrice")
     price = row.get("price")
     prev = row.get("prevPrice")
     name = row.get("name") or f"Carta {row['cardId']}"
@@ -174,24 +237,31 @@ def check_alert(player, row, ev):
     tail = (f"\n{verdict}" if verdict else "") + f"\n{row.get('url', '')}"
 
     if not price:
-        return None
-    if mode == "every":
-        return f"{name}: {fmt_coins(price)} monedas{tail}"
-    if mode in ("below", "above") and target:
-        if mode == "below":
-            crossed = price <= target and (prev is None or prev > target)
-            verb = "ha bajado a"
-        else:
-            crossed = price >= target and (prev is None or prev < target)
-            verb = "ha subido a"
-        if crossed:
-            net = net_after_tax(price)
-            return (
-                f"{name} {verb} {fmt_coins(price)} monedas "
-                f"(objetivo: {fmt_coins(target)})\n"
-                f"Neto si vendes ahora: {fmt_coins(net)}{tail}"
-            )
-    return None
+        return []
+
+    texts = []
+    for rule in player_alerts(player):
+        mode = rule.get("mode")
+        target = rule.get("target")
+        if mode == "every":
+            texts.append(f"{name}: {fmt_coins(price)} monedas{tail}")
+            continue
+        if mode in ("below", "above") and target:
+            if mode == "below":
+                crossed = price <= target and (prev is None or prev > target)
+                verb = "ha bajado a"
+            else:
+                crossed = price >= target and (prev is None or prev < target)
+                verb = "ha subido a"
+            if crossed:
+                net = net_after_tax(price)
+                extra = f" (margen del {rule['percent']}% alcanzado)" if rule.get("isMargin") else ""
+                texts.append(
+                    f"{name} {verb} {fmt_coins(price)} monedas "
+                    f"(objetivo: {fmt_coins(target)}){extra}\n"
+                    f"Neto si vendes ahora: {fmt_coins(net)}{tail}"
+                )
+    return texts
 
 
 def main():
@@ -241,6 +311,7 @@ def main():
     alerts = []
     inv_cost = 0
     inv_value = 0
+    inv_value_7d = 0
 
     for p in players:
         meta = ensure_meta(p, core, playstyles_map)
@@ -261,6 +332,8 @@ def main():
             inv_cost += buy * qty
             if net:
                 inv_value += net * qty
+            if net_after_tax(p7):
+                inv_value_7d += net_after_tax(p7) * qty
 
         row = {
             "cardId": p["cardId"],
@@ -286,15 +359,16 @@ def main():
             "netProfitTotal": (net_profit_unit * qty) if (net_profit_unit is not None and qty) else None,
             "targetPrice": p.get("targetPrice"),
             "alertMode": p.get("alertMode", "off"),
+            "alerts": player_alerts(p),
             "tag": p.get("tag", "watch"),   # squad | watch | invest
+            "dynamic": bool(p.get("dynamic")),
             "note": p.get("note"),
             "extinct": price is None,
         }
         row["verdict"] = build_verdict(row, ev)
 
-        alert = check_alert(p, row, ev)
-        if alert:
-            alerts.append((alert, row["cardId"], row.get("url")))
+        for text in check_alerts(p, row, ev):
+            alerts.append((text, row["cardId"], row.get("url")))
         rows.append(row)
 
     for text, card_id, url in alerts:
@@ -307,6 +381,7 @@ def main():
             "netValue": inv_value,
             "netProfit": inv_value - inv_cost,
             "pct": round((inv_value - inv_cost) / inv_cost * 100, 1),
+            "change7d": (inv_value - inv_value_7d) if inv_value_7d else None,
         }
 
     save_json(os.path.join(DATA, "summary.json"), {

@@ -138,14 +138,15 @@ Pega el enlace de la página del jugador en fut.gg y el recolector saca los ids 
 
 | Campo | Qué hace |
 | --- | --- |
-| `alertMode` | `below` avisa cuando **baja** del objetivo (comprar) · `above` cuando **sube** (vender) · `every` te manda el precio en cada ronda · `off` solo lo sigue en la app |
-| `targetPrice` | tu precio objetivo en monedas |
+| `alerts` | lista de reglas: `[{"mode": "below", "target": 300000}, {"mode": "above", "target": 450000}]`. Puedes tener varias a la vez en el mismo jugador — por ejemplo, que te avise si baja de un precio de compra Y si sube de un precio de venta, al mismo tiempo. `mode` es `below` (baja de) · `above` (sube de) · `every` (cada ronda, sin `target`) |
 | `tag` | `squad` (lo tienes en el equipo) · `watch` (deseado) · `invest` (comprado para vender). Son las pestañas de la app |
 | `buyPrice` | a cuánto lo compraste. **Este es el dato que ninguna web puede saber**, y sin él no hay beneficio neto |
 | `qty` | cuántas unidades tienes |
 
 Las alertas de objetivo solo saltan cuando el precio **cruza** el valor. No te
-machacan cada 30 minutos mientras siga al otro lado.
+machacan cada 30 minutos mientras siga al otro lado. El formato viejo
+(`alertMode`/`targetPrice` sueltos, una sola alerta) se sigue leyendo si ya
+tenías jugadores guardados así.
 
 ## Tu calendario: `data/events.json`
 
